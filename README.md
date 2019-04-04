@@ -19,9 +19,14 @@ These problems display the puzzle in a 9x9 layout such examples can be seen [on 
 
 # Controls
 :one: - :nine: are used to enter values into tiles
+
 Directional Keys allow for moving tiles, Mouse can also be used instead (can ignore input when mouse is moving while clicking).
+
 Apostrophe (') changes the mode in and out of note-taking mode which will be indicated by a red background and text at the top of the UI.
 
+
 Backspace and Delete will remove the guessed value.
+
 To remove a note just use the number again while in note mode.
+
 Notes will not be removed when entering a value. Deleting the value will re-display the notes.
