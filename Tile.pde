@@ -29,6 +29,7 @@ class Tile {
   
   void draw(){
     fill(c);
+    if(selectedTile != null &&  val == selectedTile.val && val != 0 && selectedTile != this && selectedTile.val != 8 && selectedTile.val != 127) fill (#98B9C1);
     square(x,y,s);
     fill(0,0,0);
     textSize(32);
@@ -64,7 +65,8 @@ class Tile {
   }
   
   void enterNotes(char _n){
-    if (l) return;
+    if (!l && _n == 'l') l = true;
+    if (l && (_n < '1' || _n > '9')) return;
     notes[Character.getNumericValue(_n)-1] = !notes[Character.getNumericValue(_n)-1];
   }
   
@@ -77,7 +79,14 @@ class Tile {
     val = _v;
   }
   
-  void deleteChar(){
-    
+  String getNotes(){
+    String out = "[";
+    for (int i = 0; i < 9; i++){
+      if(notes[i]) out += '1';
+      else out += '0';
+      if (i < 8)  out += ","; 
+    }
+    out += "]";
+    return out;
   }
 }
