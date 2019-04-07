@@ -1,6 +1,8 @@
 # SudokuGame
 Java/Processing implementation of a Sudoku client
 
+![Image of Application](https://i.imgur.com/tUWzQhe.png)
+
 Loads two currently known file types to me;
 
 ## Single Line Problems
@@ -13,7 +15,7 @@ These problems come in a single line, currently I have only seen one with 0's fo
 These problems display the puzzle in a 9x9 layout such examples can be seen [on this Sudoku research page](http://lipas.uwasa.fi/~timan/sudoku/) from the University of Vaasa
 
 # To-Do
-- [ ] Load Button (Instead of quitting to restart)
+- [x] Load Button (Instead of quitting to restart)
 - [ ] Condition checking
 - [ ] Completion notification
 
