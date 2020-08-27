@@ -4,7 +4,19 @@ final int SIZE = 9;
 ArrayList tiles;
 Tile selectedTile;
 boolean noteMode;
+boolean complete = false;
 String uid;
+
+static String[] ColourValues = new String[] { 
+        "FF0000", "00FF00", "0000FF", "FFFF00", "FF00FF", "00FFFF", "000000", 
+        "800000", "008000", "000080", "808000", "800080", "008080", "808080", 
+        "C00000", "00C000", "0000C0", "C0C000", "C000C0", "00C0C0", "C0C0C0", 
+        "400000", "004000", "000040", "404000", "400040", "004040", "404040", 
+        "200000", "002000", "000020", "202000", "200020", "002020", "202020", 
+        "600000", "006000", "000060", "606000", "600060", "006060", "606060", 
+        "A00000", "00A000", "0000A0", "A0A000", "A000A0", "00A0A0", "A0A0A0", 
+        "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0", 
+    };
 
 public void setup() {
   size(510, 560);
@@ -14,7 +26,11 @@ public void setup() {
 }
 
 public void draw() {
-  if (noteMode) {
+  if (complete) {
+    background(#00FF00);
+    text("Solved!", 510/2, 15);
+  }
+  else if (noteMode) {
     background(#CB5837);
     text("Note Mode", 510/2, 15);
   } else {
@@ -80,6 +96,8 @@ void mouseReleased() {
       selectedTile = temp;
     }
   }
+  
+  validate();
 }
 
 //#39 = Apostrophe (notes)
@@ -90,7 +108,7 @@ void keyPressed() {
   if (selectedTile == null) {
     return;
   }
-
+  
   if (key == 'l') selectedTile.enterNotes(key);
 
   if (keyCode ==  UP) {
@@ -146,15 +164,17 @@ void keyPressed() {
   }
 
 
-  println("pressed " + int(key));
+  //println("pressed " + int(key));
 
   if (selectedTile != null) {
     if (noteMode) {
       selectedTile.enterNotes(letter);
     } else {
+      complete = false;      
       selectedTile.enterValue(letter);
     }
   }
+  validate();
 }
 
 void populateTiles() {
@@ -229,9 +249,10 @@ void fileSelected(File _f) {
   if (_f == null) {
     println("Window was closed or the user hit cancel.");
   } else {
-
+    complete = false;
     if (_f.getAbsolutePath().endsWith(".psud")) {
       loadPartial(_f);
+      validate();
       return;
     }
 
@@ -257,6 +278,7 @@ void fileSelected(File _f) {
     catch (IOException e) {
       e.printStackTrace();
     }
+    validate();
   }
 }
 
@@ -342,4 +364,71 @@ void loadPartial(File _f) {
   catch (IOException e) {
     e.printStackTrace();
   }
+}
+
+boolean validate() {
+  boolean solutionValid = true;
+  
+  //row check
+  for(int row = 0; row < SIZE; row++){
+    SudokuSet validator = new SudokuSet();
+    boolean containsInvalid = false;
+    int rowStart = 0+(SIZE * row);
+    for(int column = 0; column < SIZE; column++){
+      int currentIndex = rowStart+column;
+      if(!validator.check(((Tile) tiles.get(currentIndex)).val)){
+        //((Tile) tiles.get(currentIndex)).c = #FF0000;
+        return false;
+      }
+    }
+    //if(!containsInvalid) println("Row Valid");
+  }
+  //println("rowcheck Complete");
+  
+  //column check
+  for(int column = 0; column < SIZE; column++){
+    SudokuSet validator = new SudokuSet();
+    boolean containsInvalid = false;
+    int columnStart = column;
+    for(int row = 0; row < SIZE; row++){
+      int currentIndex = columnStart+(SIZE * row);
+      if(!validator.check(((Tile) tiles.get(currentIndex)).val)){
+        //((Tile) tiles.get(currentIndex)).c = #FF0000;
+        return false;
+      }
+    }
+    //if(!containsInvalid) println("Column Valid");
+  }
+  
+  //grid check
+  /*
+  0,1,2
+  9,10,11
+  18,19,20
+  */
+  int state = 0;
+  //substr(md5($number),6)
+  for(int columnOffset = 0; columnOffset < 3; columnOffset++){
+    state++;
+    for(int offset = 0; offset < 3; offset++){
+      state++;
+      SudokuSet validator = new SudokuSet();
+      for(int rowStep = 3*columnOffset; rowStep < 3+(3*columnOffset); rowStep++){
+        for(int columnStep = 3*offset; columnStep < 3+(3*offset); columnStep++){
+          int currentIndex = (SIZE * rowStep)+columnStep;
+          if(!validator.check(((Tile) tiles.get(currentIndex)).val)){
+            //((Tile) tiles.get(currentIndex)).c = #FF0000;
+            return false;
+          }
+          //((Tile) tiles.get(currentIndex)).c = color(unhex("FF" + ColourValues[state]));
+          //println(currentIndex);
+        }
+      }
+    }
+  }
+  
+  //return false;
+  //println("Solution Valid");
+  complete = true;
+  return true;
 }

@@ -89,4 +89,8 @@ class Tile {
     out += "]";
     return out;
   }
+  
+  char getValue(){
+    return val;
+  }
 }
